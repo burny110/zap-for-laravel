@@ -1,6 +1,6 @@
 {
-    "name": "laraveljutsu/zap",
-    "description": "A flexible, performant, and developer-friendly schedule management system for Laravel",
+    "name": "burny110/zap-for-laravel",
+    "description": "A flexible, performant, and developer-friendly schedule management system for Laravel (Burny110 added buffertime)",
     "type": "library",
     "keywords": ["laravel", "schedule", "management", "calendar", "booking"],
     "license": "MIT",

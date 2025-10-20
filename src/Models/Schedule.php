@@ -16,6 +16,7 @@ use Zap\Enums\ScheduleTypes;
  * @property string|null $description
  * @property string $schedulable_type
  * @property int $schedulable_id
+ * @property string|null $team_uuid
  * @property ScheduleTypes $schedule_type
  * @property Carbon $start_date
  * @property Carbon|null $end_date
@@ -39,6 +40,7 @@ class Schedule extends Model
     protected $fillable = [
         'schedulable_type',
         'schedulable_id',
+        'team_uuid',
         'name',
         'description',
         'schedule_type',

@@ -353,7 +353,8 @@ trait HasSchedules
     public function getBookableSlots(
         string $date,
         int $slotDuration = 60,
-        ?int $bufferMinutes = null
+        ?int $bufferMinutes = null,
+        ?string $teamUuid = null
     ): array {
         if ($slotDuration <= 0) {
             return [];
@@ -366,14 +367,14 @@ trait HasSchedules
         $bufferMinutes = max(0, $bufferMinutes);
 
         // Get availability periods for this date in a single query
-        $availabilityPeriods = $this->getAvailabilityPeriodsForDate($date);
+        $availabilityPeriods = $this->getAvailabilityPeriodsForDate($date, $teamUuid);
 
         if ($availabilityPeriods->isEmpty()) {
             return [];
         }
 
         // Get all blocking schedules in a single query for conflict checking
-        $blockingSchedules = $this->getBlockingSchedulesForDate($date);
+        $blockingSchedules = $this->getBlockingSchedulesForDate($date, $teamUuid);
 
         $slotInterval = $slotDuration + $bufferMinutes;
         $allSlots = collect();
@@ -416,18 +417,23 @@ trait HasSchedules
     /**
      * Get all availability periods for a specific date in a single optimized query.
      */
-    protected function getAvailabilityPeriodsForDate(string $date): \Illuminate\Support\Collection
+    protected function getAvailabilityPeriodsForDate(string $date, ?string $teamUuid = null): \Illuminate\Support\Collection
     {
         $checkDate = \Carbon\Carbon::parse($date);
 
         // Get all availability schedules for this date
-        $availabilitySchedules = Schedule::where('schedulable_type', get_class($this))
+        $query = Schedule::where('schedulable_type', get_class($this))
             ->where('schedulable_id', $this->getKey())
             ->availability()
             ->active()
-            ->forDate($date)
-            ->with('periods')
-            ->get();
+            ->forDate($date);
+
+        // Filter by team if provided
+        if ($teamUuid !== null) {
+            $query->where('team_uuid', $teamUuid);
+        }
+
+        $availabilitySchedules = $query->with('periods')->get();
 
         $allPeriods = collect();
 
@@ -461,15 +467,20 @@ trait HasSchedules
     /**
      * Get all blocking schedules for a specific date in a single query.
      */
-    protected function getBlockingSchedulesForDate(string $date): \Illuminate\Support\Collection
+    protected function getBlockingSchedulesForDate(string $date, ?string $teamUuid = null): \Illuminate\Support\Collection
     {
-        return Schedule::where('schedulable_type', get_class($this))
+        $query = Schedule::where('schedulable_type', get_class($this))
             ->where('schedulable_id', $this->getKey())
             ->whereIn('schedule_type', [ScheduleTypes::APPOINTMENT, ScheduleTypes::BLOCKED, ScheduleTypes::CUSTOM])
             ->active()
-            ->forDate($date)
-            ->with('periods')
-            ->get();
+            ->forDate($date);
+
+        // Filter by team if provided
+        if ($teamUuid !== null) {
+            $query->where('team_uuid', $teamUuid);
+        }
+
+        return $query->with('periods')->get();
     }
 
     /**
@@ -494,7 +505,8 @@ trait HasSchedules
     public function getNextBookableSlot(
         ?string $afterDate = null,
         int $duration = 60,
-        ?int $bufferMinutes = null
+        ?int $bufferMinutes = null,
+        ?string $teamUuid = null
     ): ?array {
         if ($duration <= 0) {
             return null;
@@ -506,7 +518,7 @@ trait HasSchedules
         // Check up to 30 days in the future
         for ($i = 0; $i < 30; $i++) {
             $dateString = $checkDate->format('Y-m-d');
-            $slots = $this->getBookableSlots($dateString, $duration, $bufferMinutes);
+            $slots = $this->getBookableSlots($dateString, $duration, $bufferMinutes, $teamUuid);
 
             foreach ($slots as $slot) {
                 if ($slot['is_available']) {

@@ -30,6 +30,16 @@ class ScheduleBuilder
     }
 
     /**
+     * Set the team UUID.
+     */
+    public function forTeam(?string $teamUuid): self
+    {
+        $this->attributes['team_uuid'] = $teamUuid;
+
+        return $this;
+    }
+
+    /**
      * Set the schedule name.
      */
     public function named(string $name): self

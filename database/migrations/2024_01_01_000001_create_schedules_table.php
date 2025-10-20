@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
             $table->morphs('schedulable'); // User, Resource, etc.
-            $table->uuid('team_uuid')->nullable();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->date('start_date');
@@ -32,7 +31,6 @@ return new class extends Migration
             $table->index('is_active', 'schedules_is_active_index');
             $table->index('is_recurring', 'schedules_is_recurring_index');
             $table->index('frequency', 'schedules_frequency_index');
-            $table->index('team_uuid', 'schedules_team_uuid_index');
         });
     }
 

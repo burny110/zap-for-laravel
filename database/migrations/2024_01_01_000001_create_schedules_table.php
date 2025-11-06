@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuidMorphs('schedulable'); // User, Resource, etc.
+            $table->morphs('schedulable'); // User, Resource, etc.
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->date('start_date');

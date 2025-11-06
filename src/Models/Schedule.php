@@ -16,7 +16,7 @@ use Zap\Enums\ScheduleTypes;
  * @property string $name
  * @property string|null $description
  * @property string $schedulable_type
- * @property string $schedulable_id
+ * @property int $schedulable_id
  * @property string|null $team_uuid
  * @property ScheduleTypes $schedule_type
  * @property Carbon $start_date

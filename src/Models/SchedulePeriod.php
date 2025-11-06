@@ -7,12 +7,13 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Support\Facades\Date;
 use PDO;
 
 /**
- * @property int $id
- * @property int $schedule_id
+ * @property string $id
+ * @property string $schedule_id
  * @property Carbon $date
  * @property Carbon|null $start_time
  * @property Carbon|null $end_time
@@ -27,6 +28,8 @@ use PDO;
  */
 class SchedulePeriod extends Model
 {
+    use HasUuids;
+
     /**
      * The attributes that are mass assignable.
      */

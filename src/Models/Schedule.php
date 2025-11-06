@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Zap\Enums\ScheduleTypes;
 
 /**
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string|null $description
  * @property string $schedulable_type
- * @property int $schedulable_id
+ * @property string $schedulable_id
  * @property string|null $team_uuid
  * @property ScheduleTypes $schedule_type
  * @property Carbon $start_date
@@ -34,6 +35,8 @@ use Zap\Enums\ScheduleTypes;
  */
 class Schedule extends Model
 {
+    use HasUuids;
+
     /**
      * The attributes that are mass assignable.
      */

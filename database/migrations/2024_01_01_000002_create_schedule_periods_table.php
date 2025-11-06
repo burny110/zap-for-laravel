@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('schedule_periods', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('schedule_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('schedule_id')->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
